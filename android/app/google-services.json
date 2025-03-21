@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "238778885352",
+    "project_id": "localresourcesharing",
+    "storage_bucket": "localresourcesharing.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:238778885352:android:73b0529505e0dfce84155d",
+        "android_client_info": {
+          "package_name": "com.example.local_resource_sharing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHRWAGmQiwSFvXo4Sm9nKt17LChB8Sjyk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
