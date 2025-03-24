@@ -1,126 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:local_resource_sharing/screens/add_item_screen.dart';
-import 'package:local_resource_sharing/screens/login_screen.dart';
-import 'package:local_resource_sharing/models/resource_item.dart';
-import 'package:local_resource_sharing/widgets/resource_card.dart';
+import 'package:local_resource_sharing/screens/explore_resources_screen.dart';
+import 'package:local_resource_sharing/screens/my_resources_screen.dart';
+import 'package:local_resource_sharing/screens/borrow_requests_screen.dart';
+import 'package:local_resource_sharing/screens/profile_screen.dart';
 
-/// **HomeScreen Class**
-/// Displays user info, resource list, and logout functionality.
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String userName = '';
-  String userEmail = '';
+  int _selectedIndex = 0; // Current selected tab index
 
-  List<ResourceItem> items = [
-    ResourceItem(
-      name: 'Drill Machine',
-      category: 'Home Appliances',
-      image: 'assets/images/drill_machine.png',
-      icon: Icons.construction,
-      owner: 'Rahul Sharma',
-      description: 'Powerful drill for various tasks',
-    ),
-    ResourceItem(
-      name: 'Lawn Mower',
-      category: 'Gardening',
-      image: 'assets/images/lawn_mower.png',
-      icon: Icons.grass,
-      owner: 'Priya Patel',
-      description: 'Efficient lawn mower for a perfect lawn',
-    ),
-    ResourceItem(
-      name: 'Projector',
-      category: 'Electronics',
-      image: 'assets/images/projector.png',
-      icon: Icons.tv,
-      owner: 'Amit Verma',
-      description: 'High-resolution projector for home theater',
-    ),
+  final List<Widget> _pages = [
+    ExploreResourcesScreen(), // Index 0: Explore Resources
+    MyResourcesScreen(), // Index 1: My Resources
+    BorrowRequestsScreen(), // Index 2: My Borrow Requests
+    ProfileScreen(), // Index 3: Profile (Settings & Logout)
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    loadUserData();
-  }
-
-  /// **Loads user data from SharedPreferences**
-  Future<void> loadUserData() async {
-    final prefs = await SharedPreferences.getInstance();
+  void _onItemTapped(int index) {
     setState(() {
-      userName = prefs.getString('userName') ?? 'User';
-      userEmail = prefs.getString('userEmail') ?? 'user@example.com';
+      _selectedIndex = index;
     });
-  }
-
-  /// **Handles user logout and clears session**
-  Future<void> _logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', false);
-
-    // Navigate to LoginScreen and remove all previous screens
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Local Resource Sharing'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddItemScreen()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _logout,
-          ),
-        ],
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // User Info Section
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Welcome, $userName!',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Email: $userEmail',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
+      body: _pages[_selectedIndex], // Display the selected page
 
-          // Resource List
-          Expanded(
-            child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return ResourceCard(item: items[index]);
-              },
-            ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed, // Ensures all icons are visible
+        selectedItemColor: Colors.blue, // Color for selected icon
+        unselectedItemColor: Colors.grey, // Color for unselected icons
+        showUnselectedLabels: true, // Show labels for all items
+
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Explore',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.inventory),
+            label: 'My Resources',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment_turned_in),
+            label: 'Requests',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),

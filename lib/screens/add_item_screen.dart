@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:local_resource_sharing/screens/database_service.dart';
 
 /// **AddItemScreen Class**
 /// Allows users to list new items for sharing.
@@ -12,20 +14,47 @@ class _AddItemScreenState extends State<AddItemScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
+  final DatabaseService _databaseService = DatabaseService();
 
-  /// **Handles item submission**
-  void _submitItem() {
+  /// **Handles item submission and stores it in Firestore**
+  void _submitItem() async {
     if (_formKey.currentState!.validate()) {
-      String itemName = _nameController.text;
-      String itemDescription = _descriptionController.text;
-      String itemCategory = _categoryController.text;
+      String itemName = _nameController.text.trim();
+      String itemDescription = _descriptionController.text.trim();
+      String itemCategory = _categoryController.text.trim();
+      String? userId = FirebaseAuth.instance.currentUser?.uid;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Added $itemName to category $itemCategory')),
-      );
+      if (userId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User not logged in!')),
+        );
+        return;
+      }
 
-      // You can also navigate back to the HomeScreen or update the item list
-      Navigator.pop(context);
+      print("Submitting item: $itemName, Category: $itemCategory, Owner: $userId");
+
+      try {
+        await _databaseService.addItem(itemName, itemDescription, itemCategory, userId);
+
+        print("Item added successfully to Firestore!");
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Added $itemName successfully!')),
+          );
+
+          // Navigate back and refresh home page
+          Navigator.pop(context, true); // Sends "true" to refresh Home Screen
+        }
+      } catch (e) {
+        print("Error adding item: $e");
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to add item. Try again!')),
+          );
+        }
+      }
     }
   }
 
