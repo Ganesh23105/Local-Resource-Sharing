@@ -5,6 +5,7 @@ import 'package:local_resource_sharing/screens/explore_resources_screen.dart';
 import 'package:local_resource_sharing/screens/my_resources_screen.dart';
 import 'package:local_resource_sharing/screens/borrow_requests_screen.dart';
 import 'package:local_resource_sharing/screens/profile_screen.dart';
+import 'package:local_resource_sharing/screens/nearby_resources_map.dart'; // ✅ Import the map screen
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -18,7 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
     ExploreResourcesScreen(), // Index 0: Explore Resources
     MyResourcesScreen(), // Index 1: My Resources
     BorrowRequestsScreen(), // Index 2: My Borrow Requests
-    ProfileScreen(), // Index 3: Profile (Settings & Logout)
+    NearbyResourcesMap(), // ✅ Index 3: Map of Nearby Resources
+    ProfileScreen(), // Index 4: Profile (Settings & Logout)
   ];
 
   void _onItemTapped(int index) {
@@ -52,6 +54,10 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.assignment_turned_in),
             label: 'Requests',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map), // ✅ Map Icon Added
+            label: 'Map',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
